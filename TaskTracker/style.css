@@ -165,6 +165,55 @@ body{
   .duration{ padding:6px 8px; font-size:13px; }
 }
 
+/* Mobile: show duration inline with task text */
+@media (max-width:640px){
+  .task-item{
+    align-items:center;
+    gap:10px;
+    flex-wrap:nowrap;           /* keep everything on one line */
+  }
+
+  .task-number{ 
+    margin-right:6px;
+  }
+
+  .task-text{
+    flex:1 1 auto;
+    width:auto;                 /* allow text to share row with duration */
+    font-size:15px;
+  }
+
+  .meta-wrap{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    gap:8px;
+    margin-left:8px;
+    order:2;                    /* place meta/duration after text */
+  }
+
+  /* hide the full timestamp on small screens to save space;
+     keep duration visible inline. Remove this line if you want the timestamp too. */
+  .meta{
+    display:none;
+  }
+
+  .duration{
+    font-size:13px;
+    padding:6px 8px;
+    white-space:nowrap;
+    background: rgba(255,255,255,0.02);
+    border-radius:8px;
+  }
+
+  .actions{
+    order:3;
+    margin-left:8px;
+    display:flex;
+    gap:8px;
+  }
+}
+
 /* Responsive */
 @media (max-width:640px){
   .controls{flex-direction:column;align-items:flex-start;gap:8px}
