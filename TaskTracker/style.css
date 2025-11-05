@@ -463,7 +463,7 @@ select.input.small { padding-right: 28px; }
   .task-item {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
     padding: 14px;
   }
 
@@ -472,14 +472,14 @@ select.input.small { padding-right: 28px; }
     width: 24px;
     height: 24px;
     font-size: 12px;
-    min-width: 24px;
+    min-width: 40px;
     margin-right: 4px;
   }
 
   .checkbox {
     width: 20px;
     height: 20px;
-    min-width: 20px;
+    min-width: 40px;
     margin-right: 6px;
   }
 
