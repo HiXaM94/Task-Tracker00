@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Teacher's Score Manager</title>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Teacher's Score Manager</h1>
+            <div class="input-group">
+                <input type="text" id="studentName" placeholder="Student Name" required>
+                <select id="subject">
+                    <option value="">Select Subject</option>
+                    <option value="Math">Mathematics</option>
+                    <option value="Science">Science</option>
+                    <option value="English">English</option>
+                    <option value="History">History</option>
+                </select>
+                <input type="number" id="score" placeholder="Score (0-20)" min="0" max="20" required>
+                <button class="btn btn-primary" onclick="addScore()">Add Score</button>
+            </div>
+        </div>
+
+        <div id="tableContainer"></div>
+
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h3>Class Average</h3>
+                <div id="classAverage" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Highest Score</h3>
+                <div id="highestScore" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Lowest Score</h3>
+                <div id="lowestScore" class="stat-value">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Students</h3>
+                <div id="totalStudents" class="stat-value">0</div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src = "./app.js"></script>
+
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Task Manager</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <h1>Task Manager</h1>
+      <p class="muted">Simple, keyboard-friendly task manager — data saved in localStorage.</p>
+    </header>
+
+    <section class="task-input">
+      <form id="taskForm" aria-label="Add task">
+        <input id="taskText" class="input" type="text" placeholder="Add a new task and press Enter" autocomplete="off" />
+        <button type="submit" class="btn">Add</button>
+      </form>
+
+      <div class="controls">
+        <div class="filters" role="tablist" aria-label="Filter tasks">
+          <button class="filter active" data-filter="all" role="tab">All</button>
+          <button class="filter" data-filter="active" role="tab">Active</button>
+          <button class="filter" data-filter="completed" role="tab">Completed</button>
+        </div>
+
+        <div class="extras">
+          <input id="search" class="input small" type="search" placeholder="Search tasks" />
+          <button id="markAllCompleted" class="btn ghost" title="Mark all tasks completed">Mark all completed</button>
+          <button id="clearCompleted" class="btn ghost">Clear completed</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="task-list-wrap" aria-live="polite">
+      <ul id="taskList" class="task-list" aria-label="Tasks"></ul>
+      <div id="empty" class="empty muted">No tasks yet — add one above.</div>
+    </section>
+
+    <footer class="app-footer">
+      <div class="stats">
+        <span id="totalCount">0</span> total •
+        <span id="activeCount">0</span> active •
+        <span id="completedCount">0</span> done
+      </div>
+      <div class="hint muted">Tip: Double-click a task to edit, press Enter or blur to save.</div>
+    </footer>
+  </main>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

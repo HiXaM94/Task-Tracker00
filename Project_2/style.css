@@ -1,0 +1,136 @@
+:root{
+  --bg:#071028;
+  --card:#0b1220;
+  --muted:#9ca3af;
+  --accent:#06b6d4;
+  --success:#10b981;
+  --danger:#ef4444;
+  --glass: rgba(255,255,255,0.03);
+  --radius:12px;
+  --gap:12px;
+  --text:#e6eef6;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Inter,ui-sans-serif,system-ui,"Segoe UI",Roboto, "Helvetica Neue", Arial;
+  background: linear-gradient(180deg,#051021 0%, #071427 100%);
+  color:var(--text);
+  padding:28px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* App container */
+.app{
+  max-width:960px;
+  margin:0 auto;
+  background: linear-gradient(180deg,var(--card), #071224);
+  border-radius:var(--radius);
+  padding:22px;
+  box-shadow: 0 10px 30px rgba(2,6,23,0.7);
+  border:1px solid rgba(255,255,255,0.03);
+}
+
+/* Header */
+.app-header{margin-bottom:16px}
+.app-header h1{margin:0 0 6px;font-size:22px;letter-spacing:0.2px}
+.muted{color:var(--muted);font-size:13px}
+
+/* Input area */
+.task-input{display:flex;flex-direction:column;gap:12px;margin-bottom:14px}
+#taskForm{display:flex;gap:10px}
+.input{
+  flex:1;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.03);
+  background:var(--glass);
+  color:inherit;
+  font-size:15px;
+  transition: box-shadow .15s, transform .08s;
+}
+.input:focus{
+  outline: none;
+  box-shadow: 0 6px 18px rgba(6,182,212,0.06);
+  transform: translateY(-1px);
+}
+.input.small{padding:8px 10px;font-size:13px;width:220px}
+
+/* Buttons */
+.btn{
+  background:var(--accent);
+  color:#02111a;
+  padding:10px 14px;
+  border-radius:8px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  letter-spacing:0.2px;
+}
+.btn:hover{filter:brightness(.96); transform: translateY(-1px)}
+.btn.ghost{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.03);
+}
+
+/* Controls */
+.controls{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.filters{display:flex;gap:8px}
+.filter{
+  background:transparent;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,0.02);
+  padding:8px 10px;border-radius:8px;cursor:pointer;font-weight:700;
+}
+.filter.active{background:rgba(6,182,212,0.08);color:var(--accent);border-color:rgba(6,182,212,0.18)}
+
+/* Task list */
+.task-list-wrap{margin-top:10px}
+.task-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:10px}
+.task-item{
+  display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border:1px solid rgba(255,255,255,0.02);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.task-item:hover{transform: translateY(-4px); box-shadow: 0 8px 24px rgba(2,6,23,0.5);}
+
+/* Checkbox */
+.checkbox{
+  width:18px;height:18px;border-radius:6px;border:2px solid rgba(255,255,255,0.06);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;
+  transition: all .12s ease;
+}
+.checkbox.checked{background:var(--success);border-color:rgba(16,185,129,0.95);color:#022218}
+
+/* Text */
+.task-text{flex:1;font-size:15px;line-height:1.2;word-break:break-word}
+.task-text.completed{text-decoration:line-through;color:var(--muted)}
+
+/* Meta and actions */
+.meta{font-size:12px;color:var(--muted);margin-left:8px;white-space:nowrap}
+.actions{display:flex;gap:8px}
+.icon-btn{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px;font-size:14px}
+.icon-btn:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+/* Empty state */
+.empty{padding:20px;text-align:center;border-radius:8px;background:rgba(255,255,255,0.01);color:var(--muted)}
+
+/* Footer / stats */
+.app-footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:12px;flex-wrap:wrap}
+.stats{font-weight:700;color:var(--muted)}
+.hint{font-size:13px}
+
+/* Responsive */
+@media (max-width:640px){
+  .controls{flex-direction:column;align-items:flex-start;gap:8px}
+  .extras{display:flex;flex-direction:column;gap:8px}
+  .input.small{width:100%}
+  .app{padding:16px}
+  #taskForm{flex-direction:column;align-items:stretch}
+  .btn{width:100%}
+}
