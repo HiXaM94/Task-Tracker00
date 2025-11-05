@@ -174,7 +174,7 @@ body{
   }
 
   .task-number{ 
-    margin-right:6px;
+    margin-right:4px;
   }
 
   .task-text{
@@ -194,9 +194,6 @@ body{
 
   /* hide the full timestamp on small screens to save space;
      keep duration visible inline. Remove this line if you want the timestamp too. */
-  .meta{
-    display:none;
-  }
 
   .duration{
     font-size:13px;
@@ -296,8 +293,8 @@ body{
   }
 
   .checkbox {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 8px;
   }
 
@@ -397,4 +394,130 @@ body{
   /* ensure proper spacing when buttons stack */
   .extras { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
   .extras .input.small { flex:1 1 100%; }
+}
+
+/* Tighter spacing: reduce gap between number and checkbox */
+.task-number{
+  margin-right: 4px; /* reduced from 6px */
+}
+
+/* Make checkbox slightly larger and inline with task text */
+.checkbox{
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border-radius: 6px;
+  border: 2px solid rgba(255,255,255,0.06);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  margin-right: 8px; /* small gap to text */
+  transition: all .12s ease;
+}
+
+/* ensure checkbox aligns vertically with task text */
+.task-item { align-items: center; }
+
+/* Keep task text flexible so it sits inline with checkbox on mobile */
+.task-text { flex: 1 1 auto; }
+
+/* Make selects / dropdowns visually cohesive with app */
+.input.small,
+select.input.small,
+select {
+  background: var(--glass);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 10px;
+  border-radius: 8px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* small arrow padding fix for select elements */
+select.input.small { padding-right: 28px; }
+
+/* Mobile-specific adjustments to keep everything on one line */
+@media (max-width:640px){
+  .task-item{
+    align-items:center;
+    gap:8px;
+    flex-wrap:nowrap;
+  }
+
+  .task-number{ width:24px; height:24px; font-size:12px; min-width:24px; margin-right:4px; }
+  .checkbox { width:20px; height:20px; min-width:20px; margin-right:6px; border-radius:6px; }
+  .task-text { font-size:15px; width:auto; }
+  .meta-wrap{ display:flex; flex-direction:row; align-items:center; gap:8px; margin-left:8px; order:2; }
+  .meta{ display:none; } /* hide timestamp on small screens; keep duration shown */
+  .duration{ font-size:13px; padding:6px 8px; white-space:nowrap; background: rgba(255,255,255,0.02); border-radius:8px; }
+
+  /* dropdown/select size tweak on mobile */
+  .input.small, select.input.small { padding:10px; font-size:15px; }
+}
+
+/* Mobile adjustments for task layout */
+@media (max-width: 640px) {
+  .task-item {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  /* First row: number, checkbox, and task text */
+  .task-number {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+    min-width: 24px;
+    margin-right: 4px;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    margin-right: 6px;
+  }
+
+  .task-text {
+    flex: 1;
+    font-size: 15px;
+    margin-right: 0;
+  }
+
+  /* Second row: meta info (date and duration together) */
+  .meta-wrap {
+    width: 100%;
+    margin-left: 54px; /* aligns with text: number + checkbox + margins */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    order: 2;
+  }
+
+  .meta {
+    display: inline-block;
+    font-size: 12px;
+  }
+
+  .duration {
+    font-size: 12px;
+    padding: 4px 8px;
+    background: var(--glass);
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* Third row: action buttons */
+  .actions {
+    width: 100%;
+    margin-left: 54px;
+    margin-top: 8px;
+    order: 3;
+  }
 }
