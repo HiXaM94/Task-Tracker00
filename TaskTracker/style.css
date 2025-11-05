@@ -134,3 +134,152 @@ body{
   #taskForm{flex-direction:column;align-items:stretch}
   .btn{width:100%}
 }
+
+/* Mobile-first adjustments */
+@media (max-width: 768px) {
+  body {
+    padding: 12px;
+  }
+
+  .app {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .app-header h1 {
+    font-size: 20px;
+  }
+
+  .task-input {
+    gap: 8px;
+  }
+
+  #taskForm {
+    flex-direction: column;
+  }
+
+  .input {
+    padding: 14px;
+    font-size: 16px; /* Better tap target size */
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    margin-top: 4px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .filters {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .filter {
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+
+  .extras {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .input.small {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+  }
+
+  .task-item {
+    padding: 16px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .checkbox {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+  }
+
+  .task-text {
+    font-size: 16px;
+    width: calc(100% - 40px); /* Account for checkbox */
+  }
+
+  .meta {
+    width: 100%;
+    margin: 8px 0 0 40px;
+  }
+
+  .actions {
+    margin-left: 40px;
+  }
+
+  .icon-btn {
+    padding: 8px;
+    font-size: 18px;
+  }
+
+  /* Improve touch targets */
+  .icon-btn, 
+  .checkbox,
+  .filter,
+  .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Footer adjustments */
+  .app-footer {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .stats {
+    width: 100%;
+  }
+
+  .hint {
+    width: 100%;
+  }
+}
+
+/* Add larger screen breakpoint adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app {
+    max-width: 90%;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .task-item:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+
+  /* Add active state feedback instead */
+  .task-item:active {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .btn:active {
+    opacity: 0.9;
+  }
+}
