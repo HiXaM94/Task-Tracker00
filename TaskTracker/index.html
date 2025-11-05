@@ -16,6 +16,11 @@
     <section class="task-input">
       <form id="taskForm" aria-label="Add task">
         <input id="taskText" class="input" type="text" placeholder="Add a new task and press Enter" autocomplete="off" />
+        <input id="taskDuration" class="input small" type="number" min="1" placeholder="Duration" />
+        <select id="durationUnit" class="input small">
+          <option value="min" selected>min</option>
+          <option value="sec">sec</option>
+        </select>
         <button type="submit" class="btn">Add</button>
       </form>
 

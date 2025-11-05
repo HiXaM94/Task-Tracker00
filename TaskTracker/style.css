@@ -125,6 +125,46 @@ body{
 .stats{font-weight:700;color:var(--muted)}
 .hint{font-size:13px}
 
+/* number column (left) */
+.task-number{
+  width:28px;
+  height:28px;
+  min-width:28px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,255,255,0.02);
+  color: var(--muted);
+  border-radius:6px;
+  font-weight:700;
+  font-size:13px;
+}
+
+/* meta wrapper containing created time + duration */
+.meta-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+  margin-left:8px;
+}
+
+/* duration styling */
+.duration{
+  font-size:12px;
+  color:var(--muted);
+  background: rgba(255,255,255,0.01);
+  padding:4px 8px;
+  border-radius:8px;
+}
+
+/* mobile adjustments: keep number small and meta stacked */
+@media (max-width:640px){
+  .task-number{ width:24px; height:24px; font-size:12px; min-width:24px; }
+  .meta-wrap{ align-items:flex-start; margin-left:0; width:100%; }
+  .duration{ padding:6px 8px; font-size:13px; }
+}
+
 /* Responsive */
 @media (max-width:640px){
   .controls{flex-direction:column;align-items:flex-start;gap:8px}
@@ -282,4 +322,30 @@ body{
   .btn:active {
     opacity: 0.9;
   }
+}
+
+/* Mobile: slightly smaller "Mark all completed" / ghost buttons for tighter layout */
+@media (max-width: 768px) {
+  /* keep primary add button comfortable full-width; reduce utility buttons */
+  .btn {
+    /* primary add button remains prominent */
+    padding: 12px 14px;
+    font-size: 15px;
+    min-height: 44px;
+  }
+
+  /* make small utility / ghost buttons a bit more compact */
+  .btn.ghost,
+  #markAllCompleted,
+  #clearCompleted {
+    padding: 8px 10px;
+    font-size: 13px;
+    min-height: 38px;
+    width: auto;           /* avoid forcing full width for utility buttons */
+    align-self: flex-start;/* let them size naturally */
+  }
+
+  /* ensure proper spacing when buttons stack */
+  .extras { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .extras .input.small { flex:1 1 100%; }
 }

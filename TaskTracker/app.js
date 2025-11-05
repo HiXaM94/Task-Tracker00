@@ -5,10 +5,12 @@ let filter = 'all';
 const taskListEl = document.getElementById('taskList');
 const form = document.getElementById('taskForm');
 const input = document.getElementById('taskText');
+const durationInput = document.getElementById('taskDuration');      // NEW
+const durationUnit = document.getElementById('durationUnit');      // NEW
 const search = document.getElementById('search');
 const filters = document.querySelectorAll('.filter');
 const emptyEl = document.getElementById('empty');
-const markAllBtn = document.getElementById('markAllCompleted'); // new
+const markAllBtn = document.getElementById('markAllCompleted');
 
 function save(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
@@ -16,9 +18,19 @@ function save(){
 
 function uid(){return Date.now().toString(36) + Math.random().toString(36).slice(2,8);}
 
-function addTask(text){
+/* create task: store durationMs, remainingMs, running flag, dueAt */
+function addTask(text, durationMs = 0){
   if(!text || !text.trim()) return;
-  const t = { id: uid(), text: text.trim(), completed:false, created: Date.now() };
+  const t = {
+    id: uid(),
+    text: text.trim(),
+    completed:false,
+    created: Date.now(),
+    durationMs: durationMs,     // total duration for the timer
+    remainingMs: durationMs,    // remaining when paused
+    running: false,             // is countdown running
+    dueAt: null                 // timestamp when timer ends (Date.now() + remainingMs)
+  };
   tasks.unshift(t);
   save();
   render();
@@ -31,6 +43,64 @@ function updateCounts(){
   document.getElementById('totalCount').textContent = total;
   document.getElementById('activeCount').textContent = active;
   document.getElementById('completedCount').textContent = completed;
+}
+
+/* return HH:MM:SS elapsed/remaining string */
+function formatTime(ms){
+  if (ms < 0) ms = 0;
+  const s = Math.floor(ms/1000);
+  const hh = Math.floor(s / 3600);
+  const mm = Math.floor((s % 3600) / 60);
+  const ss = s % 60;
+  if(hh > 0) return `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  return `${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+}
+
+/* update durations: for running tasks compute remaining, check expiry */
+function updateDurations(){
+  const now = Date.now();
+  let changed = false;
+
+  tasks.forEach(task => {
+    if (task.running && task.dueAt) {
+      const rem = task.dueAt - now;
+      if (rem <= 0) {
+        // time is up
+        task.running = false;
+        task.remainingMs = 0;
+        task.dueAt = null;
+        task.completed = true; // optional: mark completed when time up
+        save();
+        // popup / notification
+        // Use non-blocking notification if available else alert
+        try {
+          if (window.Notification && Notification.permission === 'granted') {
+            new Notification('Task timer finished', { body: task.text });
+          } else {
+            // fallback to alert (blocking)
+            alert(`Time is up: ${task.text}`);
+          }
+        } catch (e) {
+          alert(`Time is up: ${task.text}`);
+        }
+        changed = true;
+      } else {
+        task.remainingMs = rem;
+      }
+    }
+  });
+
+  // update all .duration elements in DOM
+  const els = document.querySelectorAll('.duration');
+  els.forEach(el => {
+    const id = el.dataset.id;
+    const task = tasks.find(t => t.id === id);
+    if (!task) return;
+    const display = task.running ? formatTime(task.remainingMs) : formatTime(task.remainingMs || task.durationMs);
+    el.textContent = display;
+  });
+
+  if (changed) render(); // re-render to reflect completed state / actions
 }
 
 function render(){
@@ -48,10 +118,16 @@ function render(){
     emptyEl.style.display = 'none';
   }
 
-  filtered.forEach(task => {
+  filtered.forEach((task, idx) => {
     const li = document.createElement('li');
     li.className = 'task-item';
     li.dataset.id = task.id;
+
+    // incremental number on the left
+    const number = document.createElement('div');
+    number.className = 'task-number';
+    number.textContent = String(idx + 1);
+    li.appendChild(number);
 
     // checkbox
     const cb = document.createElement('button');
@@ -67,23 +143,43 @@ function render(){
     span.textContent = task.text;
     span.title = 'Double click to edit';
     span.tabIndex = 0;
-    // double-click -> edit
     span.addEventListener('dblclick', () => enableEdit(task.id, span));
-    // keyboard: Enter to edit
     span.addEventListener('keydown', (e) => {
       if(e.key === 'Enter'){ e.preventDefault(); enableEdit(task.id, span); }
     });
     li.appendChild(span);
 
-    // meta created time
+    // meta container (created + duration)
+    const metaWrap = document.createElement('div');
+    metaWrap.className = 'meta-wrap';
+
     const meta = document.createElement('div');
     meta.className = 'meta';
     meta.textContent = new Date(task.created).toLocaleString();
-    li.appendChild(meta);
+    metaWrap.appendChild(meta);
 
-    // actions
+    const duration = document.createElement('div');
+    duration.className = 'duration';
+    duration.dataset.id = task.id;
+    const display = task.running ? formatTime(task.remainingMs) : formatTime(task.remainingMs || task.durationMs);
+    duration.textContent = display;
+    metaWrap.appendChild(duration);
+
+    li.appendChild(metaWrap);
+
+    // actions: start/pause + edit + delete
     const actions = document.createElement('div');
     actions.className = 'actions';
+
+    const startBtn = document.createElement('button');
+    startBtn.className = 'icon-btn';
+    startBtn.title = task.running ? 'Pause timer' : 'Start timer';
+    startBtn.innerHTML = task.running ? '⏸️' : '▶️';
+    startBtn.addEventListener('click', () => {
+      if (task.running) pauseTimer(task.id);
+      else startTimer(task.id);
+    });
+    actions.appendChild(startBtn);
 
     const editBtn = document.createElement('button');
     editBtn.className = 'icon-btn';
@@ -114,11 +210,32 @@ function render(){
   updateCounts();
 }
 
-// new: mark all tasks completed
-function markAllCompleted(){
-  if (tasks.length === 0) return;
-  if (!confirm('Mark ALL tasks as completed?')) return;
-  tasks = tasks.map(t => ({ ...t, completed: true }));
+/* start timer for a task */
+function startTimer(id){
+  const task = tasks.find(t => t.id === id);
+  if (!task) return;
+  // if no remaining duration set, abort
+  const remaining = task.remainingMs || task.durationMs;
+  if (!remaining || remaining <= 0) {
+    alert('Task has no duration. Edit the task and set a duration first.');
+    return;
+  }
+  task.running = true;
+  task.dueAt = Date.now() + remaining;
+  // clear remainingMs while running; we'll compute live
+  task.remainingMs = remaining;
+  save();
+  render();
+}
+
+/* pause timer for a task */
+function pauseTimer(id){
+  const task = tasks.find(t => t.id === id);
+  if (!task || !task.running) return;
+  const rem = task.dueAt ? (task.dueAt - Date.now()) : task.remainingMs;
+  task.running = false;
+  task.dueAt = null;
+  task.remainingMs = rem > 0 ? rem : 0;
   save();
   render();
 }
@@ -138,25 +255,24 @@ function deleteTask(id){
 function enableEdit(id, spanEl){
   const task = tasks.find(t=>t.id===id);
   if(!task) return;
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.value = task.text;
-  input.className = 'input';
-  input.style.padding = '6px';
-  spanEl.replaceWith(input);
-  input.focus();
-  // save on blur or Enter, cancel on Escape
+  const inputEl = document.createElement('input');
+  inputEl.type = 'text';
+  inputEl.value = task.text;
+  inputEl.className = 'input';
+  inputEl.style.padding = '6px';
+  spanEl.replaceWith(inputEl);
+  inputEl.focus();
   function saveEdit(){
-    const v = input.value.trim();
+    const v = inputEl.value.trim();
     if(v) {
       task.text = v;
       save();
     }
     render();
   }
-  input.addEventListener('blur', saveEdit, {once:true});
-  input.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter'){ e.preventDefault(); input.blur(); }
+  inputEl.addEventListener('blur', saveEdit, {once:true});
+  inputEl.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter'){ e.preventDefault(); inputEl.blur(); }
     if(e.key === 'Escape'){ render(); }
   });
 }
@@ -174,11 +290,27 @@ function clearCompleted(){
   render();
 }
 
+function markAllCompleted(){
+  if (tasks.length === 0) return;
+  if (!confirm('Mark ALL tasks as completed?')) return;
+  tasks = tasks.map(t => ({ ...t, completed: true }));
+  save();
+  render();
+}
+
 /* wire events */
 form.addEventListener('submit', (e)=>{
   e.preventDefault();
-  addTask(input.value);
+  // read duration input and unit
+  const durVal = parseFloat(durationInput?.value || 0);
+  const unit = durationUnit?.value || 'min';
+  let durMs = 0;
+  if (!isNaN(durVal) && durVal > 0) {
+    durMs = unit === 'sec' ? Math.round(durVal * 1000) : Math.round(durVal * 60000);
+  }
+  addTask(input.value, durMs);
   input.value = '';
+  if (durationInput) durationInput.value = '';
   input.focus();
 });
 
@@ -189,9 +321,13 @@ filters.forEach(btn => {
 });
 
 document.getElementById('clearCompleted').addEventListener('click', clearCompleted);
-
-// wire the new button (guard in case element missing)
 if (markAllBtn) markAllBtn.addEventListener('click', markAllCompleted);
 
-/* initial render */
+/* request notification permission (optional) */
+if ("Notification" in window && Notification.permission !== 'granted') {
+  try { Notification.requestPermission(); } catch(e) {}
+}
+
+/* initial render + start duration updater */
 render();
+setInterval(updateDurations, 500);
